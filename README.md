@@ -1,4 +1,4 @@
-# 🇮🇩 SIKNAS Enterprise (Sistem Informasi Keuangan Nasional)
+# SIKNAS Enterprise (Sistem Informasi Keuangan Nasional)
 
 ![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.x-38B2AC?style=for-the-badge&logo=tailwind-css)
@@ -42,4 +42,4 @@ Sistem ini menggunakan 4 tabel inti dan 1 tabel keamanan:
 *Password untuk semua akun: `password`*
 
 ---
-*Dikembangkan menggunakan pendekatan Arsitektur Enterprise tingkat lanjut. Siap untuk dipresentasikan di hadapan dosen penguji / stakeholder pemerintahan.*
+*Dikembangkan menggunakan pendekatan Arsitektur tingkat lanjut. Siap untuk di gunakan lembaga pemerintahan*
