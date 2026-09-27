@@ -93,20 +93,41 @@
     <!-- Dynamic Breakdown -->
     <div>
         <h3 class="text-xl font-bold mb-4 border-b border-gray-100 dark:border-gray-800 pb-2">Rincian Komponen Transaksi</h3>
-        <p class="text-sm text-textSecondary mb-6">Berikut adalah detail dari mana uang tersebut berasal (Pajak) atau untuk apa uang tersebut digunakan (Program Nasional/Daerah).</p>
+        <p class="text-sm text-textSecondary mb-6">Berikut adalah detail dari mana uang tersebut berasal (Pajak) atau untuk apa uang tersebut digunakan (Program Nasional/Daerah). Klik untuk melihat detail.</p>
         
         <div class="space-y-4">
-            @foreach($breakdown as $item)
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-900 transition-colors">
-                <div class="flex items-center gap-3 mb-2 sm:mb-0">
-                    <div class="w-10 h-10 rounded-lg bg-white dark:bg-gray-700 shadow-sm flex items-center justify-center text-brandBlue">
-                        <i class="ph-bold ph-chart-pie-slice"></i>
+            @foreach($breakdown as $index => $item)
+            <div class="bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-blue-200 dark:hover:border-blue-900 transition-colors overflow-hidden">
+                <button type="button" onclick="document.getElementById('detail-{{$index}}').classList.toggle('hidden')" class="w-full text-left flex flex-col sm:flex-row sm:items-center justify-between p-4 focus:outline-none">
+                    <div class="flex items-center gap-3 mb-2 sm:mb-0">
+                        <div class="w-10 h-10 rounded-lg bg-white dark:bg-gray-700 shadow-sm flex items-center justify-center text-brandBlue">
+                            <i class="ph-bold ph-chart-pie-slice"></i>
+                        </div>
+                        <div class="font-medium text-textPrimary dark:text-darkText">{{ $item['name'] }}</div>
                     </div>
-                    <div class="font-medium">{{ $item['name'] }}</div>
-                </div>
-                <div class="text-right">
-                    <div class="font-mono font-bold text-lg text-textPrimary dark:text-darkText">Rp {{ number_format($item['amount'], 0, ',', '.') }}</div>
-                    <div class="text-xs text-textSecondary">{{ round(($item['amount'] / $trx->amount) * 100) }}% dari Total</div>
+                    <div class="text-left sm:text-right flex items-center gap-4">
+                        <div>
+                            <div class="font-mono font-bold text-lg text-textPrimary dark:text-darkText">Rp {{ number_format($item['amount'], 0, ',', '.') }}</div>
+                            <div class="text-xs text-textSecondary">{{ round(($item['amount'] / $trx->amount) * 100) }}% dari Total</div>
+                        </div>
+                        <i class="ph-bold ph-caret-down text-gray-400"></i>
+                    </div>
+                </button>
+                <div id="detail-{{$index}}" class="hidden px-4 pb-4 pt-2 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-2">
+                        <div>
+                            <div class="text-xs text-textSecondary mb-1"><i class="ph-fill ph-target text-brandBlue"></i> Tujuan / Peruntukan</div>
+                            <div class="text-sm font-medium text-textPrimary dark:text-gray-200">{{ $item['purpose'] }}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-textSecondary mb-1"><i class="ph-fill ph-map-pin text-accentRed"></i> Wilayah Alokasi</div>
+                            <div class="text-sm font-medium text-textPrimary dark:text-gray-200">{{ $item['region'] }}</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-textSecondary mb-1"><i class="ph-fill ph-user-circle text-accentGreen"></i> Penanggung Jawab (PIC)</div>
+                            <div class="text-sm font-medium text-textPrimary dark:text-gray-200">{{ $item['pic'] }}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
             @endforeach

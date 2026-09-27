@@ -10,28 +10,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 0. Seed User
-        \App\Models\User::factory()->create([
-            'name' => 'Menteri Keuangan',
-            'email' => 'menteri@siknas.gov',
-            'password' => bcrypt('password'),
-            'role' => 'super_admin'
-        ]);
-
-        \App\Models\User::factory()->create([
-            'name' => 'Auditor Utama',
-            'email' => 'auditor@siknas.gov',
-            'password' => bcrypt('password'),
-            'role' => 'auditor'
-        ]);
-
-        \App\Models\User::factory()->create([
-            'name' => 'Gubernur Jawa Barat',
-            'email' => 'gubernur@siknas.gov',
-            'password' => bcrypt('password'),
-            'role' => 'gubernur',
-            'region_id' => 12 // ID Provinsi Jawa Barat is 12, not 1!
-        ]);
+        // Users will be seeded after regions!
 
         // 4. Seed Ministries (Full List of Indonesian Ministries)
         $ministries = [
@@ -127,6 +106,39 @@ class DatabaseSeeder extends Seeder
                 'id' => $r['id'], 'name' => $r['name'], 'type' => $r['type'], 'tkdd_allocated' => $r['tkdd'],
                 'lat' => $r['lat'], 'lng' => $r['lng'],
                 'created_at' => now(), 'updated_at' => now(),
+            ]);
+        }
+
+        // 2.5 Seed Users
+        \App\Models\User::factory()->create([
+            'name' => 'Presiden Republik Indonesia',
+            'email' => 'presiden@siknas.gov',
+            'password' => 'Presiden2026!',
+            'role' => 'super_admin'
+        ]);
+
+        \App\Models\User::factory()->create([
+            'name' => 'Menteri Keuangan',
+            'email' => 'menkeu@siknas.gov',
+            'password' => 'Menkeu2026!',
+            'role' => 'super_admin'
+        ]);
+
+        \App\Models\User::factory()->create([
+            'name' => 'Auditor Utama',
+            'email' => 'auditor@siknas.gov',
+            'password' => 'Auditor2026!',
+            'role' => 'auditor'
+        ]);
+
+        foreach($regions as $r) {
+            $cleanName = strtolower(str_replace(' ', '_', $r['name']));
+            \App\Models\User::factory()->create([
+                'name' => 'Gubernur ' . $r['name'],
+                'email' => 'gubernur_' . $cleanName . '@siknas.gov',
+                'password' => 'Gubernur' . str_replace(' ', '', $r['name']) . '2026!',
+                'role' => 'gubernur',
+                'region_id' => $r['id']
             ]);
         }
 

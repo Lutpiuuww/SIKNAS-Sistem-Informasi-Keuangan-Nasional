@@ -46,23 +46,43 @@
 <script>
     gsap.from(".gsap-fade", { opacity: 0, y: 20, duration: 0.8, stagger: 0.2, ease: "power2.out" });
 
-    const map = L.map('map', { attributionControl: false }).setView([-2.5489, 118.0149], 5); // Center of Indonesia
+    const regions = @json($regions);
+    let centerLat = -2.5489;
+    let centerLng = 118.0149;
+    let zoomLevel = 5;
+
+    @if(Auth::user()->role === 'gubernur')
+        const province = regions.find(r => r.type === 'Provinsi');
+        if (province) {
+            centerLat = province.lat;
+            centerLng = province.lng;
+            zoomLevel = 9;
+        }
+    @endif
+
+    const map = L.map('map', { attributionControl: false }).setView([centerLat, centerLng], zoomLevel);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19
     }).addTo(map);
 
-    const regions = @json($regions);
+    const markerMap = {}; // store markers by lat-lng key to pulse them
+
     regions.forEach(r => {
         if (r.lat && r.lng) {
             const tkdd = (r.tkdd_allocated / 1e12).toFixed(1).replace('.', ',');
-            L.marker([r.lat, r.lng]).addTo(map)
+            const marker = L.marker([r.lat, r.lng]).addTo(map)
              .bindPopup(`<div class="font-sans"><div class="text-xs text-gray-500 font-semibold uppercase mb-1">${r.type}</div><div class="font-bold text-sm mb-1">${r.name}</div><div class="font-mono text-blue-600 font-bold">Rp ${tkdd} T</div></div>`);
+            
+            // Generate a close enough key to map transactions to this region
+            const key = Math.round(r.lat*10) + '_' + Math.round(r.lng*10);
+            if(!markerMap[key]) markerMap[key] = [];
+            markerMap[key].push({lat: r.lat, lng: r.lng, type: r.type});
         }
     });
 
     window.focusMap = (lat, lng) => {
         if(lat && lng) {
-            map.flyTo([lat, lng], 8, { duration: 1.5 });
+            map.flyTo([lat, lng], 10, { duration: 1.5 });
         }
     };
 
@@ -75,9 +95,22 @@
                 const latest = res.data[0];
                 if(latest.id !== lastTrxId && latest.lat && latest.lng) {
                     lastTrxId = latest.id;
-                    const color = latest.status === 'Anomaly' ? '#FF3B30' : '#0066CC';
+                    const color = latest.type === 'IN' ? '#34C759' : (latest.status === 'Anomaly' ? '#FF3B30' : '#0066CC');
                     
-                    const pulse = L.circleMarker([latest.lat, latest.lng], {
+                    let targetLat = latest.lat;
+                    let targetLng = latest.lng;
+
+                    // If Governor, pick a random Kabupaten in this province to pulse
+                    @if(Auth::user()->role === 'gubernur')
+                        const kabs = regions.filter(r => r.type === 'Kabupaten');
+                        if (kabs.length > 0) {
+                            const randomKab = kabs[Math.floor(Math.random() * kabs.length)];
+                            targetLat = randomKab.lat;
+                            targetLng = randomKab.lng;
+                        }
+                    @endif
+                    
+                    const pulse = L.circleMarker([targetLat, targetLng], {
                         radius: 8, fillColor: color, color: color, weight: 2, opacity: 1, fillOpacity: 0.8
                     }).addTo(map);
 

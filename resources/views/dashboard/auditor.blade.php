@@ -52,10 +52,7 @@
                 <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-900/50">
                     <div class="text-xs font-bold text-brandBlue mb-1">TOTAL DANA DITERIMA (TKDD + DESA)</div>
                     <div class="text-3xl font-black text-textPrimary dark:text-darkText mb-1">
-                        @php 
-                           $totalDaerah = str_replace(',','.',$tkdd_t) + str_replace(',','.',$dana_desa_t);
-                        @endphp
-                        Rp {{ number_format($totalDaerah, 1, ',', '.') }} T
+                        Rp {{ $total_daerah_t }} T
                     </div>
                 </div>
                 <div class="flex justify-between items-center text-sm bg-gray-50 dark:bg-darkBg p-3 rounded-lg mt-auto">
@@ -80,10 +77,12 @@
                     <div class="font-mono text-sm text-textPrimary dark:text-gray-300">Jika tren belanja infrastruktur KEMENPUPR konstan, defisit APBN bulan ini diprediksi menyentuh angka aman <b class="text-accentRed">2.14%</b> PDB (Batas UU: 3%).</div>
                 </div>
                 <div class="mt-auto">
+                    @if($user->role === 'super_admin')
                     <a href="/approvals" class="flex justify-between items-center bg-gray-50 dark:bg-darkBg p-3 rounded-lg hover:border-brandBlue transition-colors group border border-gray-100 dark:border-gray-800">
                         <span class="font-semibold text-sm">Menunggu Otorisasi</span>
                         <span class="bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded text-xs font-bold group-hover:bg-yellow-200">{{ $pendingCount }} Draf</span>
                     </a>
+                    @endif
                 </div>
             @endif
         </div>

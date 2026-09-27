@@ -35,6 +35,9 @@
             </tbody>
         </table>
     </div>
+    <div class="mt-6 relative z-10">
+        {{ $logs->links() }}
+    </div>
 </main>
 @endsection
 @push('scripts')
